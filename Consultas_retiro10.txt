@@ -1,0 +1,61 @@
+OPERADORES + FUNCIONES AGREGADAS
+
+1.obtener nombre y monto total de los afiliados que hicieron retiro de fondos (x) veces, (tiene que estar aceptada la solicitud de retiros).
+select concat(primer_apellido," ",primer_nombre) as Nombre, sum(monto) as total_retirado from (afiliado join solicitud_retiro on rut = rut_afiliado and estado = "aceptada") group by rut_afiliado having count(*) = 1 order by primer_apellido desc;
+τ primer_apellido ↓ π SUM (monto) → total_retirado σ COUNT (*) = 1 γ rut_afiliado, COUNT (*), SUM (monto) (afiliado ⋈ rut = rut_afiliado AND estado = "aceptada" solicitud_retiro)
+
+2.Mostrar el id y valor del retiro de la cuenta que hizo el retiro máximo x fecha solo si el porcentaje indicado es = 10% para todas las AFP menos PlanVital y Cuprum.
+select id_cuenta, monto as cantidad from (afp join afiliado on nombre = nombre_afp join solicitud_retiro on rut = solicitud_retiro.rut_afiliado join cuenta on rut = cuenta.rut_afiliado ) where estado = "aceptada" and fecha = "2021-05-12" and porcentaje = 10 and nombre not in ("PlanVital","Cuprum");
+π id_cuenta, monto → cantidad σ estado = 1 AND fecha = "2021-05-12" AND porcentaje = 10 AND NOT (nombre = "PlanVital" OR nombre = "Cuprum") (afp ⋈ nombre = nombre_afp afiliado ⋈ rut = solicitud_retiro . rut_afiliado solicitud_retiro ⋈ rut = cuenta . rut_afiliado cuenta)
+
+3.obtener la cantidad de retiros y total retirado por AFP de todos los afiliados que hicieron retiros antes del año (2022) ordenados por cantidad de retiros de manera descendente.
+select nombre_afp, count(rut_afiliado) as cant_retiros, sum(monto) total from afp join afiliado on nombre = nombre_afp join solicitud_retiro on rut = rut_afiliado where estado = "aceptada" group by nombre having max(fecha) <= "2021-12-31" order by count(rut_afiliado) desc;
+τ COUNT (rut_afiliado) ↓ π nombre_afp, COUNT (rut_afiliado) → cant_retiros, SUM (monto) → total σ MAX (fecha) <= "2021-12-31"γ nombre, MAX (fecha), COUNT (rut_afiliado), SUM (monto) (afp ⋈ nombre = nombre_afp afiliado ⋈ rut = rut_afiliado solicitud_retiro)
+
+4.Mostrar la informacion de los administradores ordenados por la cantidad de solicitudes que analizaron.
+select rut, concat(primer_apellido," ",primer_nombre) as Nombre, count(*) as sol_analizadas from administrador join evalua on administrador.RUT = evalua.rut_admin order by sol_analizadas;
+τ sol_analizadas π rut, primer_apellido+' '+primer_nombre → Nombre, COUNT (*) → sol_analizadas γ COUNT (*) (administrador ⋈ administrador . rut = evalua . rut_admin evalua)
+
+5.Mostrar los montos totales de las solicitudes según su estado.
+select estado, sum(monto) as Total from solicitud_retiro GROUP by estado;
+τ estado π estado, SUM (monto) → total γ SUM (monto) solicitud_retiro
+
+
+SUBCONSULTAS
+
+1.Mostrar la información de los afiliados que hicieron retiros por sobre la media por monto ordenados de manera descendente por nombre.
+select concat(primer_apellido," " ,primer_nombre) as Nombre, rut, monto from solicitud_retiro join afiliado on solicitud_retiro.rut_afiliado = afiliado.rut where monto > (select avg(monto) from solicitud_retiro) and estado = "aceptada " order by primer_apellido;
+
+2.Mostrar la información de los afiliados que hicieron retiros por bajo la media.
+select concat(primer_apellido, "  ",primer_nombre) as Nombre, rut, monto from solicitud_retiro join afiliado on solicitud_retiro.rut_afiliado = afiliado.rut where monto < (select avg(monto) from solicitud_retiro) and estado = "aceptada" order by primer_apellido;
+
+3.Mostrar la cantidad de usuarios que solicitaron retiros y que fueron rechazados o siguen estando pendiente.
+select count(*) as Total from afiliado where rut not in (select rut_afiliado from solicitud_retiro where estado = "aceptada");
+
+4. Mostrar la informacion, cantidad de solicitudes de los usuarios que solitaron retiros y que fueron rechazas o siguen estando pendiente.
+select concat(primer_apellido," ",primer_nombre) as Nombre, rut_afiliado, count(*) as total from solicitud_retiro join afiliado on afiliado.rut = solicitud_retiro.rut_afiliado where rut_afiliado not in (select rut_afiliado from solicitud_retiro where estado = "aceptada") group by RUT order by count(*) desc;
+
+GRUOP BY
+Mostrar la cantidad de retiros e información de cada afiliado, ordenados de manera desc por cantidad de retiros.
+1.select concat(primer_apellido, " ",primer_nombre) as Nombre, rut, count(*) as total from afiliado join solicitud_retiro on solicitud_retiro.rut_afiliado=afiliado.RUT  where estado = "aceptada" group by RUT order by count(*) desc;
+π primer_apellido, primero_nombre, rut, COUNT (*) → total γ rut, COUNT (*) σ estado = "aceptada" (afiliado ⋈ solicitud_retiro . rut_afiliado = afiliado . rut solicitud_retiro)
+
+2.Mostrar el conteo de solicitudes aceptadas organizadas por AFP
+select nombre_afp, count(*) as aceptadas from solicitud_retiro join afiliado on solicitud_retiro.rut_afiliado = afiliado.rut join AFP on afp.nombre = afiliado.nombre_afp where estado = "aceptada" group by nombre;
+π nombre_afp, COUNT (*) → aceptadas γ nombre, COUNT (*) σ estado = "aceptada" (solicitud_retiro ⋈ solicitud_retiro . rut_afiliado = afiliado . rut afiliado ⋈ afp . nombre = afiliado . nombre_afp afp)
+
+3.Mostrar el conteo de solicitudes rechazadas organizadas por AFP
+select nombre_afp, count(*) as rechazadas from solicitud_retiro join afiliado on solicitud_retiro.rut_afiliado = afiliado.rut join AFP on afp.nombre = afiliado.nombre_afp where estado = "rechazada" group by nombre;
+π nombre_afp, COUNT (*) → rechazadas γ nombre, COUNT (*) σ estado = "rechazada" (solicitud_retiro ⋈ solicitud_retiro . rut_afiliado = afiliado . rut afiliado ⋈ afp . nombre = afiliado . nombre_afp afp)
+
+4.Mostrar el conteo total de solicitudes organizadas por su estado
+select estado, count(*) as Cantidad  from solicitud_retiro group by estado;
+π estado, COUNT (*) → cantidad γ estado, COUNT (*) solicitud_retiro
+
+5.Mostrar el conteo de retiros dependiendo del porcentaje que se retiró ordenado por total de manera descendente.
+select porcentaje, COUNT(*) as total from solicitud_retiro where estado = "aceptada" GROUP by porcentaje order by total desc;
+τ total ↓π porcentaje, COUNT (*) → total γ porcentaje, COUNT (*) σ estado = "Aceptada" solicitud_retiro
+
+6.Mostrar la media de porcentaje que se solicita para retiro y nombre de la AFP para los retiros que fueron aceptados.
+select ROUND(AVG(porcentaje),1) as Media_porcentaje, nombre_afp from solicitud_retiro join afiliado on solicitud_retiro.rut_afiliado = afiliado.rut join afp on afp.nombre = afiliado.nombre_afp where estado = "Aceptada"   group by nombre_afp;
+π AVG (porcentaje) → media_porcentaje, nombre_afp γ nombre_afp, AVG (porcentaje) σ estado = 1 (solicitud_retiro ⋈ solicitud_retiro . rut_afiliado = afiliado . rut afiliado ⋈ afp . nombre = afiliado . nombre_afp afp)

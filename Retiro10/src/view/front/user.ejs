@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
+     <title>Retiro 10%</title>
+     <style>
+        body{background-color:rgb(56,60,68);
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="jumbotron container mt-5">
+        <h2 align = "center">Resumen de cuenta</h2>
+        <br>
+        <h5>
+            <label>Saldo: </label>
+            <label class = "text-success"><%= "$"+data.saldo %></label>
+        </h5>
+        
+        <div class="row">
+            <div class="col-md-7">
+                <table class="table">
+                    <thead>
+                        <tr class="table-active" >
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Rut</th>
+                            <th>N° Documento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td>
+                                        <%=data.primer_nombre + " " + data.segundo_nombre %>
+                                    </td>
+                                    <td>
+                                        <%=data.primer_apellido+ " " +data.segundo_apellido%>
+                                    </td>
+                                    <td>
+                                        <%=data.RUT%>
+                                    </td>
+                                    <td>
+                                        <%=data.n_documento%>
+                                    </td>
+                                </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-5">
+                <div class="card-body">
+                    
+                    <div class="card border-primary mb-3" style="max-width: 20rem;">
+                        
+                        <div class="card-header">
+                            <H3 align="center"> <%="AFP " +data.nombre_afp%></H3>
+                           
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text">
+                            <%=data.nombre_afp%>
+                          </p>
+                          <p class="card-text">
+                            <%=data.direccion%>
+                          </p>
+                          <p class="card-text">
+                            <%=data.email%>
+                          </p>
+                          <p class="card-text">
+                            <%=data.telefono%>
+                          </p>
+                        </div>
+                      </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-md-5" align = "center">
+            <form action="solicitarRetiro" method="post">
+                <div class="form-group">
+                    <legend>Retiro</legend>
+                    <label>Tipo de cuenta</label>
+                    <select  id="tipo_cuenta_retiro" name="tipo_cuenta_retiro" class="custom-select">
+                        <option value="Cuenta corriente" selected>Ahorro</option>
+                    <option value="PlanVital">Bancaria</option>
+                  </div>
+                <input type="hidden" name="RUT_afiliado" value="<%= data.RUT %>"/>
+                <input type="hidden" name="saldo" value="<%= data.saldo %>" />
+                
+                <label for="vol">Porcentaje</label>
+                <br>
+                <input type="range" id="porcentaje" name="porcentaje" class="form-range" min="1" max="10" step="1" value="1" onchange="document.getElementById('outvol').value=value">
+                <output id= "outvol" name="outvol" for="porcentaje">1</output>
+                
+                <br>
+                <input type="submit" class="btn btn-primary">
+                
+            </form>
+            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
+     <title>Retiro 10%</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          
+    <nav class="navbar navbar-dark">      
+      </nav>            
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/solicitudes">Solicitudes</a>
+              </li>                     
+            </ul>            
+          </div>
+        </div>
+      </nav>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-7">
+                <table class="table">
+                    <thead>
+                        <tr class="table-active" >
+                            <th></th>
+                            <th>RUT</th>
+                            <th>NOMBRE</th>
+                            <th>APELLIDO</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (data) { %>
+                            <% for(var i=0; i < data.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <%= i+1 %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].RUT %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].primer_nombre %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].primer_apellido %>
+                                    </td>
+                                    <td>
+                                        <a href="/delete/<%= data[i].RUT %>" class="btn btn-danger btn-sm">Borrar</a>
+                                        <a href="/edit?RUT=<%= data[i].RUT %>" class="btn btn-warning btn-sm">Update</a>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card-body">
+    
+                    <form action="/add" method="post" class="card-body">
+                        <h1>Añadir afiliado</h1>
+                        <div class="form-group">
+                            <input type="text" name="RUT" placeholder="RUT" class="form-control" autofocus>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" name="n_documento" placeholder="N# Documento" class="form-control" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="email" placeholder="Email" class="form-control" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="pass" placeholder="Contraseña" class="form-control" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="primer_nombre" placeholder="Primer nombre" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="segundo_nombre" placeholder="Segundo nombre" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="primer_apellido" placeholder="Primer apellido" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="segundo_apellido" placeholder="Segundo apellido" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <select  id="nombre_afp" name="nombre_afp" class="custom-select">
+                                    <option value="ProVida" selected>ProVida</option>
+                                <option value="PlanVital">PlanVital</option>
+                                <option value="Uno">Uno</option>
+                                <option value="Cuprum">Cuprum</option>
+                                <option value="Capital">Capital</option>
+                                <option value="Modelo">Modelo</option>
+                                <option value="Habitat">Habitat</option>
+                              </div>
+                            </select>
+                              <button type="submit" class="btn btn-success">Agregar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

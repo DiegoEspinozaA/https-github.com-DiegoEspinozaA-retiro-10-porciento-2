@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
+     <title>Retiro 10%</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+    <nav class="navbar navbar-dark">      
+      </nav>            
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/afiliados">Afiliados</a>
+              </li>                     
+            </ul>            
+          </div>
+        </div>
+      </nav>
+    <div class="container mt-5">
+        <form>
+            <fieldset>
+                        <legend align= "center">Solicitudes pendientes</legend>
+                        <table class="table ">
+                            <thead>
+                                <tr class="table-active">
+                                    <td class="col-md-1"></td>
+                                    <td>RUT</td>
+                                    <td>NOMBRE</td>
+                                    <td>MONTO</td>
+                                    <td>PORCENTAJE</td>
+                                    <td>FECHA</td>
+                                    <td>ACCIONES</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (data) { %>
+                                    <% for(var i=0; i < data.length; i++) { %>
+                                        <tr>
+                                            <td>
+                                                <%= i+1 %>
+                                            </td>
+                                            <td>
+                                                <%= data[i].RUT%>
+                                            </td>
+                                            <td>
+                                                <%= data[i].primer_nombre+" "+data[i].primer_apellido %>
+                                            </td>
+                                            <td>
+                                                <%="$"+data[i].monto%>
+                                            </td>
+                                            <td>
+                                                <%= data[i].porcentaje %>
+                                            </td>
+                                            <td>
+                                                <%= data[i].fecha %>
+                                            </td>
+                                            <td>
+                                                <form action="/aceptarSolicitud" method="POST">
+                                                    <input type="hidden" name="RUT_afiliado" value="<%= data[i].RUT %>"/>
+                                                    <input type="hidden" name="monto" value="<%= data[i].monto %>"/>
+                                                    <input type="hidden" name="id_retiro" value="<%= data[i].id_retiro %>"/>
+                                                    <button type="submit" class="btn btn-success btn-sm"> Aceptar</button>
+                                                </form>
+                                            
+                                                <a href="/denegarSolicitud/<%= data[i].id_retiro%>" class="btn btn-danger btn-sm">Denegar</a>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+        
+            </fieldset>
+    </div>
+    </form>
+</body>
+</html>
